@@ -77,20 +77,6 @@
   const capturedFbc = ensureFbc();
   const capturedFbp = getCookie('_fbp');
 
-  // ATENÇÃO: preencher o link de checkout desta oferta (OTO) antes de publicar.
-  const HOTMART_CHECKOUT_URL = ""; // ex: "https://pay.hotmart.com/XXXXXXXX?checkoutMode=10"
-
-  function buildHotmartLink(baseUrl) {
-    if (!baseUrl) return "#";
-    const url = new URL(baseUrl);
-    paramsToTrack.forEach(param => {
-      const val = getCookie(param);
-      if (val) url.searchParams.set(param, val);
-    });
-    url.searchParams.set('src', sessionSrc);
-    return url.toString();
-  }
-
   const N8N_CAPTURE_WEBHOOK_URL = "https://n8n.iaatende.click/webhook/landing-page";
 
   function sendCaptureBeacon() {
@@ -288,37 +274,9 @@
     margin-left: 5px;
   }
 
-  .buy-btn{
-    width:100%;
-    padding: 18px;
-    border-radius: 14px;
-    border:none;
-    background: #25D366;
-    color: #06210F;
-    font-family: var(--body);
-    font-weight: 800;
-    font-size: 16px;
-    cursor:pointer;
-    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
-    transition: background 0.2s ease, transform 0.15s ease;
+  .hotmart-widget-wrap{
     margin-top: 22px;
   }
-  .buy-btn:hover{ background: #2FE377; transform: scale(1.02); }
-
-  .decline-link{
-    display:block;
-    text-align:center;
-    font-family: var(--body);
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    text-decoration: underline;
-    margin-top: 16px;
-    cursor:pointer;
-    background:none;
-    border:none;
-    width:100%;
-  }
-  .decline-link:hover{ color: var(--ink); }
 
   footer.brand{
     text-align:center;
@@ -352,8 +310,15 @@
       </div>
     </div>
 
-    <button class="buy-btn" id="buy-btn">¡SÍ, QUIERO APROVECHAR ESTA OFERTA! &gt;</button>
-    <button class="decline-link" id="decline-btn">No, gracias. Continuar sin esta oferta.</button>
+    <!-- HOTMART - Sales Funnel Widget -->
+    <div class="hotmart-widget-wrap">
+      <div id="hotmart-sales-funnel"></div>
+    </div>
+    <script src="https://checkout.hotmart.com/lib/hotmart-checkout-elements.js"></script>
+    <script>
+      checkoutElements.init('salesFunnel').mount('#hotmart-sales-funnel')
+    </script>
+    <!-- HOTMART - Sales Funnel Widget -->
   </div>
 
   <footer class="brand">© 2026 – EL RITUAL DEL RETORNO</footer>

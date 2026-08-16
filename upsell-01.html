@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¡Espera! Aviso Importante Antes de Continuar</title>
+
+<!-- Preconnect: apenas domínios de fato usados nesta página -->
+<link rel="preconnect" href="https://fast.wistia.com" crossorigin>
+<link rel="preconnect" href="https://connect.facebook.net" crossorigin>
+
+<!-- Poster do vídeo (imagem estática real) é o candidato a LCP nesta página —
+     ele carrega com prioridade alta via atributo fetchpriority no próprio <img>.
+     Os scripts pesados do player Wistia só são injetados quando o usuário clica em play
+     (mesma lógica de carregamento tardio já usada na página principal do quiz). -->
+
+<!-- Script de Captura de UTMs, src (Hotmart), Cookies, fbc/fbp e Beacon pro n8n
+     (roda de imediato: é síncrono, leve, e não faz nenhuma requisição bloqueante) -->
+<script>
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
+
+  function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+
+  const paramsToTrack = [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_term',
+    'utm_content',
+    'src',
+    'sck'
+  ];
+
+  (function captureURLParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    paramsToTrack.forEach(param => {
+      if (urlParams.has(param)) {
+        setCookie(param, urlParams.get(param), 30);
+      }
+    });
+  })();
+
+  function getOrCreateSrc() {
+    const existing = getCookie('src');
+    if (existing) return existing;
+    const sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+    setCookie('src', sid, 30);
+    return sid;
+  }
+  const sessionSrc = getOrCreateSrc();
+
+  function ensureFbc() {
+    const existing = getCookie('_fbc');
+    if (existing) return existing;
+    const urlParams = new URLSearchParams(window.location.search);
+    const fbclid = urlParams.get('fbclid');
+    if (fbclid) {
+      const fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+      setCookie('_fbc', fbc, 90);
+      return fbc;
+    }
+    return null;
+  }
+  const capturedFbc = ensureFbc();
+  const capturedFbp = getCookie('_fbp');
+
+  // ATENÇÃO: preencher o link de checkout desta oferta (OTO) antes de publicar.
+  const HOTMART_CHECKOUT_URL = ""; // ex: "https://pay.hotmart.com/XXXXXXXX?checkoutMode=10"
+
+  function buildHotmartLink(baseUrl) {
+    if (!baseUrl) return "#";
+    const url = new URL(baseUrl);
+    paramsToTrack.forEach(param => {
+      const val = getCookie(param);
+      if (val) url.searchParams.set(param, val);
+    });
+    url.searchParams.set('src', sessionSrc);
+    return url.toString();
+  }
+
+  const N8N_CAPTURE_WEBHOOK_URL = "https://n8n.iaatende.click/webhook/landing-page";
+
+  function sendCaptureBeacon() {
+    if (!N8N_CAPTURE_WEBHOOK_URL || N8N_CAPTURE_WEBHOOK_URL.indexOf('http') !== 0) return;
+    const payload = {
+      src: sessionSrc,
+      fbc: capturedFbc,
+      fbp: capturedFbp,
+      user_agent: navigator.userAgent,
+      event_source_url: window.location.href,
+      utm_source: getCookie('utm_source'),
+      utm_campaign: getCookie('utm_campaign'),
+      utm_medium: getCookie('utm_medium'),
+      utm_content: getCookie('utm_content')
+    };
+    fetch(N8N_CAPTURE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify(payload)
+    }).catch(function(){ /* falha silenciosa: não bloqueia a navegação */ });
+  }
+
+  // Meta Pixel Base Code — carregado após o primeiro paint para não competir
+  // com a renderização inicial (reduz TBT/main-thread work sem perder o evento).
+  function loadMetaPixel(){
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '2073069586868708');
+    fbq('track', 'PageView');
+    sendCaptureBeacon();
+  }
+
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(loadMetaPixel, { timeout: 1500 });
+  } else {
+    setTimeout(loadMetaPixel, 1);
+  }
+</script>
+
+<style>
+  :root{
+    --bg: #0A0908;
+    --card: #121110;
+    --card-deep: #1B1917;
+    --ink: #FFFFFF;
+    --ink-soft: #D1D1D1;
+    --accent: #E5484D;
+    --accent-soft: #FF5A5F;
+    --line: rgba(255,255,255,0.2);
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  @font-face{
+    font-family:'Fraunces';
+    src: local('Georgia');
+    font-display: swap;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg);
+    font-family: var(--body);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 16px;
+    background:
+      radial-gradient(ellipse at top, #1C0A0B 0%, #0A0908 60%),
+      var(--bg);
+  }
+
+  .phone{
+    width: 100%;
+    max-width: 420px;
+    min-height: 600px;
+    background: var(--card);
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+    display:flex;
+    flex-direction:column;
+  }
+
+  .upsell-stage{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    padding: 28px 24px 24px;
+  }
+
+  .warning-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    align-self:flex-start;
+    background: rgba(229, 72, 77, 0.15);
+    border: 1px solid #E5484D;
+    color: #FF8A8E;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  h1.upsell-headline{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.32;
+    letter-spacing: -0.01em;
+    color: #C9A227;
+    margin: 0 0 14px;
+  }
+
+  p.upsell-text{
+    font-family: var(--body);
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+
+  p.upsell-text.strong{
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .video-block{
+    margin: 20px 0 4px;
+  }
+
+  .video-frame{
+    width:100%;
+    aspect-ratio: 9 / 16;
+    background: #14100D;
+    border-radius: 16px;
+    overflow:hidden;
+    position:relative;
+    border: 1px solid var(--line);
+  }
+
+  .video-frame img{
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    display:block;
+    cursor:pointer;
+  }
+
+  .play-btn{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background: rgba(10,9,8,0.55);
+    border: 2px solid rgba(255,255,255,0.85);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition: transform 0.15s ease, background 0.2s ease;
+  }
+  .play-btn:hover{ background: rgba(229,72,77,0.75); transform: translate(-50%,-50%) scale(1.06); }
+  .play-btn::after{
+    content:"";
+    width:0; height:0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 20px solid #FFFFFF;
+    margin-left: 5px;
+  }
+
+  .buy-btn{
+    width:100%;
+    padding: 18px;
+    border-radius: 14px;
+    border:none;
+    background: #25D366;
+    color: #06210F;
+    font-family: var(--body);
+    font-weight: 800;
+    font-size: 16px;
+    cursor:pointer;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+    transition: background 0.2s ease, transform 0.15s ease;
+    margin-top: 22px;
+  }
+  .buy-btn:hover{ background: #2FE377; transform: scale(1.02); }
+
+  .decline-link{
+    display:block;
+    text-align:center;
+    font-family: var(--body);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    margin-top: 16px;
+    cursor:pointer;
+    background:none;
+    border:none;
+    width:100%;
+  }
+  .decline-link:hover{ color: var(--ink); }
+
+  footer.brand{
+    text-align:center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    padding: 14px 0 20px;
+    opacity: 0.75;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="upsell-stage">
+    <div class="warning-tag">⚠ No cierres la página</div>
+
+    <h1 class="upsell-headline">¡NO CIERRES LA PÁGINA: COMPRA EN PROCESO!</h1>
+    <p class="upsell-text strong">Tu compra está a punto de finalizarse, pero antes necesito darte un aviso importante.</p>
+    <p class="upsell-text">Solo vas a ver esta página una vez, por eso te pido que prestes mucha atención y mires el video de abajo.</p>
+
+    <div class="video-block">
+      <div class="video-frame" id="video-frame">
+        <img id="video-poster" src="https://fast.wistia.com/embed/medias/4ifqathr1j/swatch" alt="Video del ritual" width="640" height="1138" fetchpriority="high" decoding="async">
+        <button class="play-btn" id="play-btn" aria-label="Reproducir video"></button>
+      </div>
+    </div>
+
+    <button class="buy-btn" id="buy-btn">¡SÍ, QUIERO APROVECHAR ESTA OFERTA! &gt;</button>
+    <button class="decline-link" id="decline-btn">No, gracias. Continuar sin esta oferta.</button>
+  </div>
+
+  <footer class="brand">© 2026 – EL RITUAL DEL RETORNO</footer>
+</div>
+
+<script>
+  // Carregamento tardio do player Wistia: só entra no DOM quando o usuário
+  // clica em play — mesma lógica da página principal do quiz, onde o player
+  // só carrega bem depois do primeiro paint. Isso mantém o JS pesado da Wistia
+  // fora da janela de medição do Lighthouse/PageSpeed no carregamento inicial.
+  let wistiaLoaded = false;
+  function loadWistiaPlayer(){
+    if (wistiaLoaded) return;
+    wistiaLoaded = true;
+
+    const frame = document.getElementById('video-frame');
+    frame.innerHTML = '';
+
+    const player = document.createElement('wistia-player');
+    player.setAttribute('media-id', '4ifqathr1j');
+    player.setAttribute('aspect', '0.5625');
+    player.id = 'upsell-player';
+    frame.appendChild(player);
+
+    const s1 = document.createElement('script');
+    s1.src = 'https://fast.wistia.com/player.js';
+    s1.async = true;
+    document.body.appendChild(s1);
+
+    const s2 = document.createElement('script');
+    s2.src = 'https://fast.wistia.com/embed/4ifqathr1j.js';
+    s2.async = true;
+    s2.type = 'module';
+    document.body.appendChild(s2);
+  }
+
+  document.getElementById('play-btn').addEventListener('click', loadWistiaPlayer);
+  document.getElementById('video-poster').addEventListener('click', loadWistiaPlayer);
+
+  // Botão de compra: monta o link do Hotmart com os parâmetros de tracking.
+  // HOTMART_CHECKOUT_URL ainda está vazio (definido lá em cima) — preencher antes de publicar.
+  document.getElementById('buy-btn').addEventListener('click', () => {
+    if (!HOTMART_CHECKOUT_URL) {
+      console.warn('HOTMART_CHECKOUT_URL não definido ainda.');
+      return;
+    }
+    window.location.href = buildHotmartLink(HOTMART_CHECKOUT_URL);
+  });
+
+  // Botão "não, obrigado": redirecionar para a página de downsell quando ela existir.
+  const DOWNSELL_URL = ""; // ex: "https://lp.iaatende.click/downsell-01.html"
+  document.getElementById('decline-btn').addEventListener('click', () => {
+    if (DOWNSELL_URL) {
+      window.location.href = DOWNSELL_URL;
+    }
+  });
+</script>
+
+</body>
+</html>

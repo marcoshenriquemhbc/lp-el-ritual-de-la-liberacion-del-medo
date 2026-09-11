@@ -357,24 +357,6 @@
 
   document.getElementById('play-btn').addEventListener('click', loadWistiaPlayer);
   document.getElementById('video-poster').addEventListener('click', loadWistiaPlayer);
-
-  // Botão de compra: monta o link do Hotmart com os parâmetros de tracking.
-  // HOTMART_CHECKOUT_URL ainda está vazio (definido lá em cima) — preencher antes de publicar.
-  document.getElementById('buy-btn').addEventListener('click', () => {
-    if (!HOTMART_CHECKOUT_URL) {
-      console.warn('HOTMART_CHECKOUT_URL não definido ainda.');
-      return;
-    }
-    window.location.href = buildHotmartLink(HOTMART_CHECKOUT_URL);
-  });
-
-  // Botão "não, obrigado": redirecionar para a página de downsell quando ela existir.
-  const DOWNSELL_URL = ""; // ex: "https://lp.iaatende.click/downsell-01.html"
-  document.getElementById('decline-btn').addEventListener('click', () => {
-    if (DOWNSELL_URL) {
-      window.location.href = DOWNSELL_URL;
-    }
-  });
 </script>
 
 </body>
